@@ -7,6 +7,6 @@ void print_current_ipv4();
 
 bool wifi_connect();
 
-bool wifi_configure();
+void wifi_configure();
 
 #endif

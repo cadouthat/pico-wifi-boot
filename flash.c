@@ -36,10 +36,10 @@ void write_config_flash(char *ssid, char* pass) {
     memcpy(write_to, CONFIG_MAGIC_CODE, CONFIG_MAGIC_CODE_LEN);
     write_to += CONFIG_MAGIC_CODE_LEN;
 
-    memcpy(write_to, ssid, strlen(ssid));
+    memcpy(write_to, ssid, MIN(strlen(ssid) + 1, WIFI_CONFIG_SSID_SIZE));
     write_to += WIFI_CONFIG_SSID_SIZE;
 
-    memcpy(write_to, pass, strlen(pass));
+    memcpy(write_to, pass, MIN(strlen(pass) + 1, WIFI_CONFIG_PASS_SIZE));
     write_to += WIFI_CONFIG_PASS_SIZE;
 
     write_sector(CONFIG_FLASH_OFFSET, sector);
