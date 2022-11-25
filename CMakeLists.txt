@@ -8,14 +8,14 @@ set(CMAKE_CXX_STANDARD 17)
 pico_sdk_init()
 
 add_library(pico_wifi_boot
-  flash.c
-  ota_server.c
-  reboot.c
-  sniffer_crc32.c
-  wifi_manager.c)
+  src/flash.c
+  src/ota_server.c
+  src/reboot.c
+  src/sniffer_crc32.c
+  src/wifi_manager.c)
 
 target_include_directories(pico_wifi_boot PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_include_directories(pico_wifi_boot PRIVATE ${CMAKE_CURRENT_LIST_DIR}/bootloader_lwipopts )
+target_include_directories(pico_wifi_boot PRIVATE ${CMAKE_CURRENT_LIST_DIR}/include_private )
 
 target_link_libraries(pico_wifi_boot
   pico_cyw43_arch_lwip_threadsafe_background
@@ -26,7 +26,7 @@ target_link_libraries(pico_wifi_boot
 )
 
 add_executable(bootloader
-  bootloader.c
+  src/bootloader.c
 )
 
 pico_enable_stdio_usb(bootloader 1)
@@ -34,7 +34,7 @@ pico_enable_stdio_uart(bootloader 1)
 
 pico_add_extra_outputs(bootloader)
 
-target_include_directories(bootloader PRIVATE ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_CURRENT_LIST_DIR}/bootloader_lwipopts )
+target_include_directories(bootloader PRIVATE ${CMAKE_CURRENT_LIST_DIR}/include_private )
 
 target_link_libraries(bootloader
   pico_wifi_boot
