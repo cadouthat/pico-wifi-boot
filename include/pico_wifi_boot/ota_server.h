@@ -9,6 +9,14 @@
 #define OTA_PORT 2222
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct tcp_pcb* ota_init(uint16_t port);
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
 
 #endif

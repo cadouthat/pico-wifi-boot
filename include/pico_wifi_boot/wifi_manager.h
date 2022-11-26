@@ -3,10 +3,18 @@
 
 #include <stdbool.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void print_current_ipv4();
 
 bool wifi_connect();
 
 void wifi_configure();
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
 
 #endif
