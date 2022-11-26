@@ -15,7 +15,7 @@ add_library(pico_wifi_boot
   src/wifi_manager.c)
 
 target_include_directories(pico_wifi_boot PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_include_directories(pico_wifi_boot PRIVATE ${CMAKE_CURRENT_LIST_DIR}/include_private )
+target_include_directories(pico_wifi_boot PRIVATE ${CMAKE_CURRENT_LIST_DIR}/src )
 
 target_link_libraries(pico_wifi_boot
   pico_cyw43_arch_lwip_threadsafe_background
@@ -34,7 +34,7 @@ pico_enable_stdio_uart(bootloader 1)
 
 pico_add_extra_outputs(bootloader)
 
-target_include_directories(bootloader PRIVATE ${CMAKE_CURRENT_LIST_DIR}/include_private )
+target_include_directories(bootloader PRIVATE ${CMAKE_CURRENT_LIST_DIR}/src )
 
 target_link_libraries(bootloader
   pico_wifi_boot
