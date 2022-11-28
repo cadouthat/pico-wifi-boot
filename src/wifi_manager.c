@@ -11,14 +11,7 @@
 void print_current_ipv4() {
     cyw43_arch_lwip_begin();
 
-    uint32_t uip = ip4_addr_get_u32(netif_ip4_addr(netif_default));
-
-    printf(
-        "IPv4 address: %u.%u.%u.%u\n",
-        (uip & 0x000000FF),
-        (uip & 0x0000FF00) >> 8,
-        (uip & 0x00FF0000) >> 16,
-        (uip & 0xFF000000) >> 24);
+    printf("IPv4 address: %s\n", ipaddr_ntoa(netif_ip4_addr(netif_default)));
 
     cyw43_arch_lwip_end();
 }
