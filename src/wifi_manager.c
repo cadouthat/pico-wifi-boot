@@ -20,7 +20,7 @@ bool wifi_connect() {
     char ssid[WIFI_CONFIG_SSID_SIZE + 1] = {0};
     char pass[WIFI_CONFIG_PASS_SIZE + 1] = {0};
 
-    if (!read_config_flash(ssid, pass) || !ssid[0]) {
+    if (!read_wifi_config(ssid, pass) || !ssid[0]) {
         printf("WiFi is not configured\n");
         return false;
     }
@@ -72,5 +72,5 @@ void wifi_configure() {
     while (!prompt("WiFi SSID: ", ssid, sizeof(ssid)));
     while (!prompt("WiFi pass: ", pass, sizeof(pass)));
 
-    write_config_flash(ssid, pass);
+    write_wifi_config(ssid, pass);
 }
