@@ -9,7 +9,7 @@ extern "C" {
 
 void print_current_ipv4();
 
-bool wifi_connect();
+bool wifi_connect(int attempts);
 
 void wifi_configure();
 

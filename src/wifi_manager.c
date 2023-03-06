@@ -16,7 +16,7 @@ void print_current_ipv4() {
     cyw43_arch_lwip_end();
 }
 
-bool wifi_connect() {
+bool wifi_connect(int attempts) {
     char ssid[WIFI_CONFIG_SSID_SIZE + 1] = {0};
     char pass[WIFI_CONFIG_PASS_SIZE + 1] = {0};
 
@@ -25,13 +25,15 @@ bool wifi_connect() {
         return false;
     }
 
-    printf("Connecting to %s\n", ssid);
-    if (cyw43_arch_wifi_connect_timeout_ms(ssid, pass, CYW43_AUTH_WPA2_AES_PSK, 30000)) {
+    for (int attempt = 0; attempt < attempts; attempt++) {
+        printf("Connecting to %s\n", ssid);
+        if (cyw43_arch_wifi_connect_timeout_ms(ssid, pass, CYW43_AUTH_WPA2_AES_PSK, 30000) == 0) {
+            return true;
+        }
         printf("Failed to connect\n");
-        return false;
     }
 
-    return true;
+    return false;
 }
 
 bool prompt(const char* message, char* buf, int buf_size) {
