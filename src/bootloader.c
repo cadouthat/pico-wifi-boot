@@ -13,16 +13,12 @@ bool wifi_init() {
         return false;
     }
 
-    cyw43_arch_enable_sta_mode();
-
     // TODO: provide some way to force configuration mode
     while (!wifi_connect(3)) {
         cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
         sleep_ms(1000);
         wifi_configure();
     }
-
-    print_current_ipv4();
 
     return true;
 }

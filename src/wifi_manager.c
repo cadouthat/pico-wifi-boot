@@ -25,9 +25,12 @@ bool wifi_connect(int attempts) {
         return false;
     }
 
+    cyw43_arch_enable_sta_mode();
+
     for (int attempt = 0; attempt < attempts; attempt++) {
         printf("Connecting to %s\n", ssid);
         if (cyw43_arch_wifi_connect_timeout_ms(ssid, pass, CYW43_AUTH_WPA2_AES_PSK, 30000) == 0) {
+            print_current_ipv4();
             return true;
         }
         printf("Failed to connect\n");
