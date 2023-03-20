@@ -6,8 +6,16 @@
 
 #include "hardware/flash.h"
 
-// Config flash size is one sector
-#define CONFIG_FLASH_OFFSET (PICO_FLASH_SIZE_BYTES - FLASH_SECTOR_SIZE) // Sector aligned
+// Config is placed just before flash bank, or at the end of flash
+#ifdef PICO_FLASH_BANK_STORAGE_OFFSET
+#define CONFIG_FLASH_END_OFFSET PICO_FLASH_BANK_STORAGE_OFFSET
+_Static_assert(CONFIG_FLASH_END_OFFSET % FLASH_SECTOR_SIZE == 0, "PICO_FLASH_BANK_STORAGE_OFFSET must be sector-aligned");
+#else
+#define CONFIG_FLASH_END_OFFSET PICO_FLASH_SIZE_BYTES
+#endif
+
+// Config flash is one sector in size, at a sector-aligned offset
+#define CONFIG_FLASH_OFFSET (CONFIG_FLASH_END_OFFSET - FLASH_SECTOR_SIZE)
 #define CONFIG_MAGIC_CODE "CNF\n"
 #define CONFIG_MAGIC_CODE_LEN 4
 #define WIFI_CONFIG_SSID_SIZE 32
@@ -17,7 +25,7 @@
 // Note: this needs to match the linker script offset to build user programs
 #define BOOTLOADER_RESERVED_FLASH_SIZE (352 * 1024) // Sector aligned
 #define USER_PROGRAM_OFFSET BOOTLOADER_RESERVED_FLASH_SIZE
-#define USER_PROGRAM_MAX_SIZE (PICO_FLASH_SIZE_BYTES - BOOTLOADER_RESERVED_FLASH_SIZE - FLASH_SECTOR_SIZE)
+#define USER_PROGRAM_MAX_SIZE (CONFIG_FLASH_OFFSET - USER_PROGRAM_OFFSET)
 
 #ifdef __cplusplus
 extern "C" {
