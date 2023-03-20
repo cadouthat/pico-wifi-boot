@@ -9,7 +9,7 @@ These targets require users to provide a CMake library named `lwipopts_provider`
 
 The [bootloader](/CMakeLists.txt) is a typical Pico SDK executable, buildable with CMake (with the lwIP caveat above).
 
-User programs (binaries intended to be used with this bootloader) must be built using the provided `wifi_boot_user_program_bin` CMake function ([see example](example/)).
+User programs (binaries intended to be used with this bootloader) must be built using the provided `wifi_boot_user_program_bin` CMake function ([see example](example/CMakeLists.txt)).
 This uses customized linker settings to work with the offset where the binary will be loaded in flash.
 
 ## Flashing
