@@ -16,5 +16,5 @@ This uses customized linker settings to work with the offset where the binary wi
 1. The `bootloader` binary should be flashed onto the Pico using normal methods. This binary also contains the L1 bootloader from the SDK
 1. Reboot while holding GPIO 15 low, which will prevent the bootloader from jumping into uninitialized user program space
 1. The bootloader will enter programming mode, and will prompt for WiFi credentials via serial. After successful configuration, the credentials are stored in flash
-1. The bootloader will wait for a user program to be uploaded (using the upload tool), and will automatically reboot into the user program
+1. The bootloader will wait for a user program to be uploaded (using the [upload tool](upload_tool/)), and will automatically reboot into the user program
 1. Once loaded, user programs may utilize the provided [OTA server](include/pico_wifi_boot/ota_server.h) to enable rebooting into the bootloader wirelessly
