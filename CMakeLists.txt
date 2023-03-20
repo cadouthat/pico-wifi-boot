@@ -24,6 +24,7 @@ target_link_libraries(pico_wifi_boot
   hardware_flash
   hardware_sync
   cmsis_core
+  lwipopts_provider
 )
 
 add_executable(bootloader
@@ -41,6 +42,7 @@ target_link_libraries(bootloader
   pico_wifi_boot
   pico_cyw43_arch_lwip_threadsafe_background
   pico_stdlib
+  lwipopts_provider
 )
 
 function(wifi_boot_user_program_bin NAME)
