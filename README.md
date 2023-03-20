@@ -2,14 +2,14 @@
 L2 bootloader for the Raspberry Pi Pico W which provides the ability to flash user programs wirelessly over TCP.
 WiFi credentials are stored in flash, and the provided library allows user programs to connect to WiFi using the same credentials.
 
-An example user program is [provided here](https://github.com/cadouthat/pico-wifi-boot-blink).
+An example user program is [provided here](example/).
 
 ## Building
 These targets require users to provide a CMake library named `lwipopts_provider` which exposes the `lwipopts.h` header for lwIP configuration.
 
 The [bootloader](/CMakeLists.txt) is a typical Pico SDK executable, buildable with CMake (with the lwIP caveat above).
 
-User programs (binaries intended to be used with this bootloader) must be built using the provided `wifi_boot_user_program_bin` CMake function ([see example](https://github.com/cadouthat/pico-wifi-boot-blink)).
+User programs (binaries intended to be used with this bootloader) must be built using the provided `wifi_boot_user_program_bin` CMake function ([see example](example/)).
 This uses customized linker settings to work with the offset where the binary will be loaded in flash.
 
 ## Flashing
