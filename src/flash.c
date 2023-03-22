@@ -5,6 +5,8 @@
 #include "hardware/flash.h"
 #include "hardware/sync.h"
 
+#include "pico_wifi_boot/sniffer_crc32.h"
+
 void write_flash_sector(uint32_t sector_offset, uint8_t* data) {
     do {
         uint32_t saved = save_and_disable_interrupts();
