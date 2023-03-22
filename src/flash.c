@@ -30,7 +30,7 @@ bool read_wifi_config(char* ssid, char* pass) {
 }
 
 bool read_extra_config(void* extra, uint16_t size) {
-    if (size > EXTRA_CONFIG_MAX_SIZE) {
+    if (size > FLASH_CONFIG_EXTRA_MAX_SIZE) {
         return false;
     }
 
@@ -83,7 +83,7 @@ void write_wifi_config(char *ssid, char* pass) {
 }
 
 bool write_extra_config(void *extra, uint16_t size) {
-    if (size > EXTRA_CONFIG_MAX_SIZE) {
+    if (size > FLASH_CONFIG_EXTRA_MAX_SIZE) {
         return false;
     }
 
