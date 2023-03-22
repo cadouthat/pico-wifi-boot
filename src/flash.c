@@ -6,10 +6,12 @@
 #include "hardware/sync.h"
 
 void write_sector(uint32_t sector_offset, uint8_t* data) {
-    uint32_t saved = save_and_disable_interrupts();
-    flash_range_erase(sector_offset, FLASH_SECTOR_SIZE);
-    flash_range_program(sector_offset, data, FLASH_SECTOR_SIZE);
-    restore_interrupts(saved);
+    do {
+        uint32_t saved = save_and_disable_interrupts();
+        flash_range_erase(sector_offset, FLASH_SECTOR_SIZE);
+        flash_range_program(sector_offset, data, FLASH_SECTOR_SIZE);
+        restore_interrupts(saved);
+    } while (memcmp(data, (uint8_t*)XIP_BASE + sector_offset, FLASH_SECTOR_SIZE) != 0);
 }
 
 bool read_wifi_config(char* ssid, char* pass) {

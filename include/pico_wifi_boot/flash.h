@@ -31,7 +31,7 @@ _Static_assert(CONFIG_FLASH_END_OFFSET % FLASH_SECTOR_SIZE == 0, "PICO_FLASH_BAN
 extern "C" {
 #endif
 
-// Writes a full (aligned) flash sector
+// Writes a full (aligned) flash sector, with write-verify-retry loop
 void write_sector(uint32_t sector_offset, uint8_t* data);
 
 // Reads previously stored wifi credentials from flash, failing if config is not recognized.
