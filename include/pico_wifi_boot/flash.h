@@ -32,7 +32,7 @@ extern "C" {
 #endif
 
 // Writes a full (aligned) flash sector, with write-verify-retry loop
-void write_sector(uint32_t sector_offset, uint8_t* data);
+void write_flash_sector(uint32_t sector_offset, uint8_t* data);
 
 // Reads previously stored wifi credentials from flash, failing if config is not recognized.
 // Provided buffers must be at least WIFI_CONFIG_SSID_SIZE, WIFI_CONFIG_PASS_SIZE bytes
@@ -44,12 +44,12 @@ void write_wifi_config(char *ssid, char* pass);
 
 // Writes user-defined config to flash.
 // Returns false if size > FLASH_CONFIG_EXTRA_MAX_SIZE
-bool write_extra_config(void *extra, uint16_t size);
+bool write_flash_config_extra(void *extra, uint16_t size);
 
 // Reads previously stored user-defined config from flash.
 // Returns false if flash config is not recognized, size > FLASH_CONFIG_EXTRA_MAX_SIZE,
 // or if the stored data does not match the stored checksum
-bool read_extra_config(void *extra, uint16_t size);
+bool read_flash_config_extra(void *extra, uint16_t size);
 
 #ifdef __cplusplus
 } // extern "C"

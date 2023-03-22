@@ -127,7 +127,7 @@ bool ota_process_payload(struct OtaConnectionState* state, struct pbuf* pb) {
         if (state->partial_bytes == FLASH_SECTOR_SIZE
             || state->bytes_written + state->partial_bytes == state->request.payload_size) {
             // Always write a full sector for simplicity, since we erase one anyway
-            write_sector(USER_PROGRAM_OFFSET + state->bytes_written, state->data);
+            write_flash_sector(USER_PROGRAM_OFFSET + state->bytes_written, state->data);
 
             state->bytes_written += state->partial_bytes;
             state->partial_bytes = 0;

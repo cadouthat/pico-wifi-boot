@@ -5,7 +5,7 @@
 #include "hardware/flash.h"
 #include "hardware/sync.h"
 
-void write_sector(uint32_t sector_offset, uint8_t* data) {
+void write_flash_sector(uint32_t sector_offset, uint8_t* data) {
     do {
         uint32_t saved = save_and_disable_interrupts();
         flash_range_erase(sector_offset, FLASH_SECTOR_SIZE);
@@ -31,7 +31,7 @@ bool read_wifi_config(char* ssid, char* pass) {
     return true;
 }
 
-bool read_extra_config(void* extra, uint16_t size) {
+bool read_flash_config_extra(void* extra, uint16_t size) {
     if (size > FLASH_CONFIG_EXTRA_MAX_SIZE) {
         return false;
     }
@@ -81,10 +81,10 @@ void write_wifi_config(char *ssid, char* pass) {
     memcpy(write_to, pass, MIN(strlen(pass) + 1, WIFI_CONFIG_PASS_SIZE));
     write_to += WIFI_CONFIG_PASS_SIZE;
 
-    write_sector(CONFIG_FLASH_OFFSET, sector);
+    write_flash_sector(CONFIG_FLASH_OFFSET, sector);
 }
 
-bool write_extra_config(void *extra, uint16_t size) {
+bool write_flash_config_extra(void *extra, uint16_t size) {
     if (size > FLASH_CONFIG_EXTRA_MAX_SIZE) {
         return false;
     }
@@ -102,5 +102,5 @@ bool write_extra_config(void *extra, uint16_t size) {
     memcpy(write_to, extra, size);
     write_to += size;
 
-    write_sector(CONFIG_FLASH_OFFSET, sector);
+    write_flash_sector(CONFIG_FLASH_OFFSET, sector);
 }
