@@ -44,10 +44,13 @@ bool read_extra_config(void* extra, uint16_t size) {
     read_from += WIFI_CONFIG_SSID_SIZE;
     read_from += WIFI_CONFIG_PASS_SIZE;
 
-    if (memcmp(read_from, &size, sizeof(size)) != 0) {
+    uint32_t stored_crc;
+    memcpy(&stored_crc, read_from, size);
+    read_from += sizeof(stored_crc);
+
+    if (stored_crc != sniffer_crc32(read_from, size)) {
         return false;
     }
-    read_from += sizeof(size);
 
     memcpy(extra, read_from, size);
     read_from += size;
@@ -90,8 +93,9 @@ bool write_extra_config(void *extra, uint16_t size) {
     write_to += WIFI_CONFIG_SSID_SIZE;
     write_to += WIFI_CONFIG_PASS_SIZE;
 
-    memcpy(write_to, &size, sizeof(size));
-    write_to += sizeof(size);
+    uint32_t crc32 = sniffer_crc32(extra, size);
+    memcpy(write_to, &crc32, sizeof(crc32));
+    write_to += sizeof(crc32);
 
     memcpy(write_to, extra, size);
     write_to += size;
