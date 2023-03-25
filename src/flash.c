@@ -49,7 +49,7 @@ bool read_flash_config_extra(void* extra, uint16_t size) {
     read_from += WIFI_CONFIG_PASS_SIZE;
 
     uint32_t stored_crc;
-    memcpy(&stored_crc, read_from, size);
+    memcpy(&stored_crc, read_from, sizeof(stored_crc));
     read_from += sizeof(stored_crc);
 
     if (stored_crc != sniffer_crc32(read_from, size)) {
