@@ -105,4 +105,5 @@ bool write_flash_config_extra(void *extra, uint16_t size) {
     write_to += size;
 
     write_flash_sector(CONFIG_FLASH_OFFSET, sector);
+    return true;
 }
