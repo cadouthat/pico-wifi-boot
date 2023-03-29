@@ -16,8 +16,6 @@ bool wifi_init() {
         return false;
     }
 
-    print_current_ipv4();
-
     return true;
 }
 

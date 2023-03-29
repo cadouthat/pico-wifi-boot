@@ -2,18 +2,25 @@
 
 #include <stdio.h>
 
-#include "pico/cyw43_arch.h"
+#include "cyw43_config.h"
+#include "cyw43_ll.h"
+#include "lwip/netif.h"
 
 #include "pico_wifi_boot/flash.h"
 
 #define SERIAL_INPUT_END '\r'
 
+// Forward-declare some functions we depend on from pico_cyw43_arch, since we do not know the required
+// arch type to include pico/cyw43_arch.h
+void cyw43_arch_enable_sta_mode(void);
+int cyw43_arch_wifi_connect_timeout_ms(const char *ssid, const char *pw, uint32_t auth, uint32_t timeout);
+
 void print_current_ipv4() {
-    cyw43_arch_lwip_begin();
+    cyw43_thread_enter();
 
     printf("IPv4 address: %s\n", ipaddr_ntoa(netif_ip4_addr(netif_default)));
 
-    cyw43_arch_lwip_end();
+    cyw43_thread_exit();
 }
 
 bool wifi_connect(int attempts) {

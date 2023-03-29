@@ -3,9 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "cyw43_config.h"
 #include "hardware/flash.h"
-#include "pico/cyw43_arch.h"
-
 #include "lwip/pbuf.h"
 #include "lwip/tcp.h"
 
@@ -292,7 +291,7 @@ struct tcp_pcb* init_listen_pcb(uint16_t port) {
 }
 
 struct tcp_pcb* ota_init(uint16_t port) {
-    cyw43_arch_lwip_begin();
+    cyw43_thread_enter();
 
     struct tcp_pcb* listen_pcb = init_listen_pcb(port);
     if (listen_pcb) {
@@ -303,7 +302,7 @@ struct tcp_pcb* ota_init(uint16_t port) {
         printf("OTA server failed to listen on port %d\n", port);
     }
 
-    cyw43_arch_lwip_end();
+    cyw43_thread_exit();
 
     return listen_pcb;
 }

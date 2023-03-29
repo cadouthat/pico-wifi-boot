@@ -18,12 +18,13 @@ target_include_directories(pico_wifi_boot PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/inc
 target_include_directories(pico_wifi_boot PRIVATE ${CMAKE_CURRENT_LIST_DIR}/src )
 
 target_link_libraries(pico_wifi_boot
-  pico_cyw43_arch_lwip_threadsafe_background
-  pico_stdlib
+  cmsis_core
   hardware_dma
   hardware_flash
   hardware_sync
-  cmsis_core
+  pico_stdlib
+  pico_cyw43_driver
+  pico_lwip_nosys
   lwipopts_provider
 )
 
