@@ -41,8 +41,9 @@ target_include_directories(bootloader PRIVATE ${CMAKE_CURRENT_LIST_DIR}/src )
 
 target_link_libraries(bootloader
   pico_wifi_boot
-  pico_cyw43_arch_lwip_threadsafe_background
+  pico_cyw43_arch_lwip_poll
   pico_stdlib
+  pico_time
   lwipopts_provider
 )
 

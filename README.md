@@ -7,7 +7,7 @@ An example user program is [provided here](example/).
 ## Building
 These targets require users to provide a CMake library named `lwipopts_provider` which exposes the `lwipopts.h` header for lwIP configuration.
 
-The `pico_wifi_boot` library also requires users to link with an implementation of `pico_cyw43_arch` (e.g. `pico_cyw43_arch_lwip_threadsafe_background`).
+The `pico_wifi_boot` library also requires users to link with an implementation of `pico_cyw43_arch` (e.g. `pico_cyw43_arch_lwip_poll`).
 
 The [bootloader](/CMakeLists.txt) is a typical Pico SDK executable, buildable with CMake (with the lwIP caveat above).
 
