@@ -11,6 +11,8 @@ void print_current_ipv4();
 
 bool wifi_connect(int attempts);
 
+bool attempt_wifi_configure();
+
 void wifi_configure();
 
 #ifdef __cplusplus

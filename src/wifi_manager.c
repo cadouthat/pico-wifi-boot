@@ -1,6 +1,6 @@
 #include "pico_wifi_boot/wifi_manager.h"
 
-#include <stdio.h>
+#include "pico/stdio.h"
 
 #include "cyw43_config.h"
 #include "cyw43_ll.h"
@@ -8,6 +8,7 @@
 
 #include "pico_wifi_boot/flash.h"
 
+#define SERIAL_INPUT_TIMEOUT_US (30 * 1000 * 1000)
 #define SERIAL_INPUT_END '\r'
 
 // Forward-declare some functions we depend on from pico_cyw43_arch, since we do not know the required
@@ -50,10 +51,10 @@ bool prompt(const char* message, char* buf, int buf_size) {
     printf("%s", message);
 
     int len = 0;
-    char c;
+    int c;
     while (true) {
-        c = getchar();
-        if (!c || c == SERIAL_INPUT_END) {
+        c = getchar_timeout_us(SERIAL_INPUT_TIMEOUT_US);
+        if (!c || c == SERIAL_INPUT_END || c == PICO_ERROR_TIMEOUT) {
             break;
         }
         putchar(c);
@@ -73,16 +74,29 @@ bool prompt(const char* message, char* buf, int buf_size) {
         printf("Entry exceeds max length of %d characters\n", buf_size - 1);
         return false;
     }
+    if (c == PICO_ERROR_TIMEOUT) {
+        printf("Input timeout\n");
+        return false;
+    }
 
     return true;
 }
 
-void wifi_configure() {
+bool attempt_wifi_configure() {
     char ssid[WIFI_CONFIG_SSID_SIZE + 1] = {0};
     char pass[WIFI_CONFIG_PASS_SIZE + 1] = {0};
     
-    while (!prompt("WiFi SSID: ", ssid, sizeof(ssid)));
-    while (!prompt("WiFi pass: ", pass, sizeof(pass)));
+    if (!prompt("WiFi SSID: ", ssid, sizeof(ssid))) {
+        return false;
+    }
+    if (!prompt("WiFi pass: ", pass, sizeof(pass))) {
+        return false;
+    }
 
     write_wifi_config(ssid, pass);
+    return true;
+}
+
+void wifi_configure() {
+    while (!attempt_wifi_configure()) {}
 }
