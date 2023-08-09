@@ -70,12 +70,12 @@ bool prompt(const char* message, char* buf, int buf_size) {
         printf("\nNULL input detected\n");
         return false;
     }
-    if (c != SERIAL_INPUT_END) {
-        printf("Entry exceeds max length of %d characters\n", buf_size - 1);
-        return false;
-    }
     if (c == PICO_ERROR_TIMEOUT) {
         printf("Input timeout\n");
+        return false;
+    }
+    if (c != SERIAL_INPUT_END) {
+        printf("Entry exceeds max length of %d characters\n", buf_size - 1);
         return false;
     }
 
