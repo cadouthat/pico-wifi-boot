@@ -258,12 +258,14 @@ err_t on_ota_connect(void* arg, struct tcp_pcb* new_pcb, err_t err) {
         printf("OTA server: error accepting connection\n");
         return ERR_ARG;
     }
+
     if (err == ERR_OK) {
         printf("OTA server: client connected\n");
     } else {
         printf("OTA server: connect error %d, proceeding anyway\n", (int)err);
     }
 
+    // TODO: clean up inactive connections on tcp_poll
     tcp_arg(new_pcb, calloc(1, sizeof(struct OtaConnectionState)));
     tcp_err(new_pcb, on_ota_error);
     tcp_recv(new_pcb, on_ota_recv);
