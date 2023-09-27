@@ -198,38 +198,41 @@ err_t on_ota_recv(void* arg, struct tcp_pcb* pcb, struct pbuf* pb, err_t err) {
 
     if (!arg) {
         printf("OTA server: missing arg in callback\n");
-        return ERR_ARG;
+        if (pb) {
+            pbuf_free(pb);
+        }
+        tcp_abort(pcb);
+        return ERR_ABRT;
     }
 
-    if (!pb) {
+    bool keep_connection = true;
+
+    if (pb) {
+        if (pb->tot_len) {
+            keep_connection = ota_process(pcb, state, pb);
+            tcp_recved(pcb, pb->tot_len);
+        }
+
+        pbuf_free(pb);
+    } else {
         printf("OTA server: connection closed by client\n");
 
         if (state->ready_to_reboot) {
             reboot_after_disconnect();
-        } else {
-            free(state);
-            tcp_arg(pcb, NULL);
-            tcp_abort(pcb);
-            return ERR_ABRT;
         }
+
+        keep_connection = false;
     }
 
-    err_t result = ERR_OK;
+    if (!keep_connection) {
+        tcp_arg(pcb, NULL);
+        free(state);
 
-    if (pb->tot_len) {
-        if (ota_process(pcb, state, pb)) {
-            tcp_recved(pcb, pb->tot_len);
-        } else {
-            free(state);
-            tcp_arg(pcb, NULL);
-            tcp_abort(pcb);
-            result = ERR_ABRT;
-        }
+        tcp_abort(pcb);
+        return ERR_ABRT;
     }
 
-    pbuf_free(pb);
-
-    return result;
+    return ERR_OK;
 }
 
 void on_ota_error(void* arg, err_t err) {
