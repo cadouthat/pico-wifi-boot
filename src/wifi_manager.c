@@ -48,6 +48,9 @@ bool wifi_connect(int attempts) {
 }
 
 bool prompt(const char* message, char* buf, int buf_size) {
+    // Clear any input that was queued before the prompt (there is often a null character before first input)
+    while (getchar_timeout_us(1000) != PICO_ERROR_TIMEOUT);
+
     printf("%s", message);
 
     int len = 0;
