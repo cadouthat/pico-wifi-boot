@@ -1,5 +1,7 @@
 #include "pico_wifi_boot/wifi_manager.h"
 
+#include <string.h>
+
 #include "pico/stdio.h"
 
 #include "cyw43_config.h"
@@ -93,7 +95,11 @@ bool attempt_wifi_configure() {
         return false;
     }
 
-    write_wifi_config(ssid, pass);
+    if (!write_wifi_config(ssid, pass)) {
+        printf("Failed to write config to flash\n");
+        return false;
+    }
+
     return true;
 }
 

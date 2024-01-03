@@ -40,10 +40,11 @@ void write_flash_sector(uint32_t sector_offset, uint8_t* data);
 bool read_wifi_config(char* ssid, char* pass);
 
 // Writes wifi credentials to flash, limited to WIFI_CONFIG_SSID_SIZE / WIFI_CONFIG_PASS_SIZE
-void write_wifi_config(char *ssid, char* pass);
+// Returns false if buffer allocation fails
+bool write_wifi_config(char *ssid, char* pass);
 
 // Writes user-defined config to flash.
-// Returns false if size > FLASH_CONFIG_EXTRA_MAX_SIZE
+// Returns false if size > FLASH_CONFIG_EXTRA_MAX_SIZE or buffer allocation fails
 bool write_flash_config_extra(void *extra, uint16_t size);
 
 // Reads previously stored user-defined config from flash.

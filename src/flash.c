@@ -87,8 +87,13 @@ uint8_t *init_write_buffer(uint8_t* sector) {
     return sector + CONFIG_MAGIC_CODE_LEN;
 }
 
-void write_wifi_config(char *ssid, char* pass) {
-    uint8_t sector[FLASH_SECTOR_SIZE];
+bool write_wifi_config(char *ssid, char* pass) {
+    // Get space on the heap to avoid large stack vars
+    uint8_t* sector = malloc(FLASH_SECTOR_SIZE);
+    if (!sector) {
+        return false;
+    }
+
     uint8_t *write_to = init_write_buffer(sector);
 
     memcpy(write_to, ssid, MIN(strlen(ssid) + 1, WIFI_CONFIG_SSID_SIZE));
@@ -98,6 +103,9 @@ void write_wifi_config(char *ssid, char* pass) {
     write_to += WIFI_CONFIG_PASS_SIZE;
 
     write_flash_sector(CONFIG_FLASH_OFFSET, sector);
+
+    free(sector);
+    return true;
 }
 
 bool write_flash_config_extra(void *extra, uint16_t size) {
@@ -105,7 +113,12 @@ bool write_flash_config_extra(void *extra, uint16_t size) {
         return false;
     }
 
-    uint8_t sector[FLASH_SECTOR_SIZE];
+    // Get space on the heap to avoid large stack vars
+    uint8_t* sector = malloc(FLASH_SECTOR_SIZE);
+    if (!sector) {
+        return false;
+    }
+
     uint8_t *write_to = init_write_buffer(sector);
 
     write_to += WIFI_CONFIG_SSID_SIZE;
@@ -119,5 +132,7 @@ bool write_flash_config_extra(void *extra, uint16_t size) {
     write_to += size;
 
     write_flash_sector(CONFIG_FLASH_OFFSET, sector);
+
+    free(sector);
     return true;
 }
