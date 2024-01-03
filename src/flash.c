@@ -1,5 +1,6 @@
 #include "pico_wifi_boot/flash.h"
 
+#include <stdlib.h>
 #include <string.h>
 
 #include "hardware/flash.h"
