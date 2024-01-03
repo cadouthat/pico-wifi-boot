@@ -25,6 +25,7 @@ target_link_libraries(pico_wifi_boot
   pico_stdlib
   pico_cyw43_driver
   pico_lwip_nosys
+  pico_multicore
   lwipopts_provider
 )
 

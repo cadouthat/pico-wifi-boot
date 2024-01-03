@@ -4,16 +4,30 @@
 
 #include "hardware/flash.h"
 #include "hardware/sync.h"
+#include "pico/multicore.h"
 
 #include "pico_wifi_boot/sniffer_crc32.h"
 
 void write_flash_sector(uint32_t sector_offset, uint8_t* data) {
+    // If both cores are running, the other core must be locked out to prevent flash XIP access
+    // Note: multicore_lockout_victim_init() must have been called on the other core in this case
+    uint other_core_num = get_core_num() ? 0 : 1;
+    bool core_lockout_available = multicore_lockout_victim_is_initialized(other_core_num);
+    if (core_lockout_available) {
+        multicore_lockout_start_blocking();
+    }
+
     do {
+        // Disable interrupts to avoid flash XIP access
         uint32_t saved = save_and_disable_interrupts();
         flash_range_erase(sector_offset, FLASH_SECTOR_SIZE);
         flash_range_program(sector_offset, data, FLASH_SECTOR_SIZE);
         restore_interrupts(saved);
     } while (memcmp(data, (uint8_t*)XIP_BASE + sector_offset, FLASH_SECTOR_SIZE) != 0);
+
+    if (core_lockout_available) {
+        multicore_lockout_end_blocking();
+    }
 }
 
 bool read_wifi_config(char* ssid, char* pass) {
