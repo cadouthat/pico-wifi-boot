@@ -48,17 +48,18 @@ bool wifi_connect(int attempts) {
 }
 
 bool prompt(const char* message, char* buf, int buf_size) {
-    // Clear any input that was queued before the prompt (there is often a null character before first input)
-    while (getchar_timeout_us(1000) != PICO_ERROR_TIMEOUT);
-
     printf("%s", message);
 
     int len = 0;
     int c;
     while (true) {
         c = getchar_timeout_us(SERIAL_INPUT_TIMEOUT_US);
-        if (!c || c == SERIAL_INPUT_END || c == PICO_ERROR_TIMEOUT) {
+        if (c == SERIAL_INPUT_END || c == PICO_ERROR_TIMEOUT) {
             break;
+        }
+        if (!c) {
+            // Ignore NULL inputs
+            continue;
         }
         putchar(c);
         if (len >= buf_size - 1) {
@@ -69,10 +70,6 @@ bool prompt(const char* message, char* buf, int buf_size) {
     buf[len] = 0;
     printf("\n");
 
-    if (!c) {
-        printf("\nNULL input detected\n");
-        return false;
-    }
     if (c == PICO_ERROR_TIMEOUT) {
         printf("Input timeout\n");
         return false;
