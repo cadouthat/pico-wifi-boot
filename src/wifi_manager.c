@@ -4,6 +4,7 @@
 
 #include "pico/stdio.h"
 
+#include "cyw43.h"
 #include "cyw43_config.h"
 #include "cyw43_ll.h"
 #include "lwip/netif.h"
@@ -26,7 +27,7 @@ void print_current_ipv4() {
     cyw43_thread_exit();
 }
 
-bool wifi_connect(int attempts) {
+bool wifi_connect(int attempts, bool enable_powersave) {
     char ssid[WIFI_CONFIG_SSID_SIZE + 1] = {0};
     char pass[WIFI_CONFIG_PASS_SIZE + 1] = {0};
 
@@ -36,6 +37,12 @@ bool wifi_connect(int attempts) {
     }
 
     cyw43_arch_enable_sta_mode();
+
+    if (!enable_powersave &&
+        cyw43_wifi_pm(&cyw43_state, cyw43_pm_value(CYW43_NO_POWERSAVE_MODE, 20, 1, 1, 1)) != 0) {
+        printf("cyw43_wifi_pm failed\n");
+        return false;
+    }
 
     for (int attempt = 0; attempt < attempts; attempt++) {
         printf("Connecting to %s\n", ssid);
