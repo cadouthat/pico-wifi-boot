@@ -13,7 +13,7 @@ bool wifi_init() {
 
     cyw43_arch_enable_sta_mode();
 
-    if (!wifi_connect(1)) {
+    if (!wifi_connect(/*attempts=*/ 1, /*enable_powersave=*/ true)) {
         return false;
     }
 

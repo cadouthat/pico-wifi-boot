@@ -14,7 +14,7 @@ bool wifi_init() {
     }
 
     // TODO: provide some way to force configuration mode
-    while (!wifi_connect(3)) {
+    while (!wifi_connect(/*attempts=*/ 3, /*enable_powersave=*/ false)) {
         cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
         sleep_ms(1000);
         wifi_configure();
