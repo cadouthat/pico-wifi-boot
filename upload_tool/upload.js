@@ -39,6 +39,7 @@ const checksum = crc32.unsigned(fileBuffer);
 let allowedRetries = 3;
 let payloadSent = false;
 
+console.log('Connecting to', argv[2]);
 const socket = new net.Socket();
 socket.connect(2222, argv[2], function() {
   console.log('Connected');
