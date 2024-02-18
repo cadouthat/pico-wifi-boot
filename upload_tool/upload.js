@@ -76,7 +76,7 @@ socket.on('data', function(data) {
     break;
   case ErrorCode.REBOOTING:
     // TODO: automatic reconnect
-    console.log('Server needs to reboot');
+    console.log('Target needs to reboot');
     socket.destroy();
     break;
   default:
