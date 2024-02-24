@@ -145,6 +145,10 @@ bool prompt(const char* message, char* buf, int buf_size) {
     return true;
 }
 
+bool wifi_manager_is_connected() {
+    return cyw43_tcpip_link_status(&cyw43_state, CYW43_ITF_STA) == CYW43_LINK_UP;
+}
+
 bool wifi_manager_attempt_configure() {
     char ssid[WIFI_CONFIG_SSID_SIZE + 1] = {0};
     char pass[WIFI_CONFIG_PASS_SIZE + 1] = {0};

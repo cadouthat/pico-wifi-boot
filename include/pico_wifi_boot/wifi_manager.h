@@ -15,6 +15,8 @@ void wifi_manager_connect_async();
 
 bool wifi_manager_connect(int attempts);
 
+bool wifi_manager_is_connected();
+
 bool wifi_manager_attempt_configure();
 
 void wifi_manager_configure();
