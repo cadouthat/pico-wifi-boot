@@ -18,6 +18,9 @@
 // arch type to include pico/cyw43_arch.h
 void cyw43_arch_enable_sta_mode(void);
 int cyw43_arch_wifi_connect_timeout_ms(const char *ssid, const char *pw, uint32_t auth, uint32_t timeout);
+int cyw43_arch_wifi_connect_async(const char *ssid, const char *pw, uint32_t auth);
+
+bool wifi_manager_config_stale = false;
 
 void print_current_ipv4() {
     cyw43_thread_enter();
@@ -27,20 +30,71 @@ void print_current_ipv4() {
     cyw43_thread_exit();
 }
 
-bool wifi_connect(int attempts, bool enable_powersave) {
-    char ssid[WIFI_CONFIG_SSID_SIZE + 1] = {0};
-    char pass[WIFI_CONFIG_PASS_SIZE + 1] = {0};
-
-    if (!read_wifi_config(ssid, pass) || !ssid[0]) {
-        printf("WiFi is not configured\n");
-        return false;
-    }
-
+bool wifi_manager_init(bool enable_powersave) {
     cyw43_arch_enable_sta_mode();
 
     if (!enable_powersave &&
         cyw43_wifi_pm(&cyw43_state, cyw43_pm_value(CYW43_NO_POWERSAVE_MODE, 20, 1, 1, 1)) != 0) {
         printf("cyw43_wifi_pm failed\n");
+        return false;
+    }
+
+    return true;
+}
+
+void wifi_manager_connect_async() {
+    static uint32_t wait_until_ms = 0;
+    static bool is_connecting = false;
+
+    uint32_t now_ms = to_ms_since_boot(get_absolute_time());
+    if (wait_until_ms > now_ms) {
+        return;
+    }
+
+    int status = cyw43_tcpip_link_status(&cyw43_state, CYW43_ITF_STA);
+    if (status == CYW43_LINK_UP && !wifi_manager_config_stale) {
+        if (is_connecting) {
+            is_connecting = false;
+            print_current_ipv4();
+        }
+        wait_until_ms = now_ms + 1000;
+        return;
+    }
+
+    if (status < 0 && is_connecting) {
+        printf("Failed to connect (%d)\n", status);
+        is_connecting = false;
+        wait_until_ms = now_ms + 5000;
+        return;
+    }
+
+    if (!is_connecting || wifi_manager_config_stale) {
+        char ssid[WIFI_CONFIG_SSID_SIZE + 1] = {0};
+        char pass[WIFI_CONFIG_PASS_SIZE + 1] = {0};
+        if (!read_wifi_config(ssid, pass) || !ssid[0]) {
+            printf("WiFi is not configured\n");
+            wait_until_ms = now_ms + 5000;
+            return;
+        }
+
+        if (cyw43_arch_wifi_connect_async(ssid, pass, CYW43_AUTH_WPA2_AES_PSK) != 0) {
+            printf("cyw43_arch_wifi_connect_async failed\n");
+            wait_until_ms = now_ms + 5000;
+            return;
+        }
+
+        printf("Connecting to %s\n", ssid);
+        is_connecting = true;
+        wifi_manager_config_stale = false;
+    }
+}
+
+bool wifi_manager_connect(int attempts) {
+    char ssid[WIFI_CONFIG_SSID_SIZE + 1] = {0};
+    char pass[WIFI_CONFIG_PASS_SIZE + 1] = {0};
+
+    if (!read_wifi_config(ssid, pass) || !ssid[0]) {
+        printf("WiFi is not configured\n");
         return false;
     }
 
@@ -91,7 +145,7 @@ bool prompt(const char* message, char* buf, int buf_size) {
     return true;
 }
 
-bool attempt_wifi_configure() {
+bool wifi_manager_attempt_configure() {
     char ssid[WIFI_CONFIG_SSID_SIZE + 1] = {0};
     char pass[WIFI_CONFIG_PASS_SIZE + 1] = {0};
     
@@ -107,9 +161,11 @@ bool attempt_wifi_configure() {
         return false;
     }
 
+    wifi_manager_config_stale = true;
+
     return true;
 }
 
-void wifi_configure() {
-    while (!attempt_wifi_configure()) {}
+void wifi_manager_configure() {
+    while (!wifi_manager_attempt_configure()) {}
 }

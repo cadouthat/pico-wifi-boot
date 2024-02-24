@@ -9,11 +9,15 @@ extern "C" {
 
 void print_current_ipv4();
 
-bool wifi_connect(int attempts, bool enable_powersave);
+bool wifi_manager_init(bool enable_powersave);
 
-bool attempt_wifi_configure();
+void wifi_manager_connect_async();
 
-void wifi_configure();
+bool wifi_manager_connect(int attempts);
+
+bool wifi_manager_attempt_configure();
+
+void wifi_manager_configure();
 
 #ifdef __cplusplus
 } // extern "C"

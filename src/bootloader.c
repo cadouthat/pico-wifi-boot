@@ -13,11 +13,15 @@ bool wifi_init() {
         return false;
     }
 
+    if (!wifi_manager_init(/*enable_powersave=*/ false)) {
+        return false;
+    }
+
     // TODO: provide some way to force configuration mode
-    while (!wifi_connect(/*attempts=*/ 3, /*enable_powersave=*/ false)) {
+    while (!wifi_manager_connect(/*attempts=*/ 3)) {
         cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
         sleep_ms(1000);
-        wifi_configure();
+        wifi_manager_configure();
     }
 
     return true;

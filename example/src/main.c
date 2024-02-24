@@ -11,9 +11,11 @@ bool wifi_init() {
         return false;
     }
 
-    cyw43_arch_enable_sta_mode();
+    if (!wifi_manager_init(/*enable_powersave=*/ true)) {
+        return false;
+    }
 
-    if (!wifi_connect(/*attempts=*/ 1, /*enable_powersave=*/ true)) {
+    if (!wifi_manager_connect(/*attempts=*/ 1)) {
         return false;
     }
 
